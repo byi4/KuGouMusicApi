@@ -58,7 +58,13 @@ module.exports = (params, useAxios) => {
         if (body?.status === 1 && body?.data) {
           res.cookie.push(`dfid=${res.body.data['dfid']}`);
         }
-
+        res.body.data = {
+          ...(res.body.data || {}),
+          mid: params?.cookie?.KUGOU_API_MID,
+          guid: params?.cookie?.KUGOU_API_GUID,
+          serverDev: params?.cookie?.KUGOU_API_DEV,
+          mac: params?.cookie?.KUGOU_API_MAC,
+        };
         resolve(res);
       })
       .catch((e) => reject(e));
