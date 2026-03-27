@@ -1,14 +1,20 @@
-const { signParamsKey, appid, clientver } = require('../util');
+const { signParamsKey, appid, clientver, cryptoMd5 } = require('../util');
+
 module.exports = (params, useAxios) => {
   const userid = params?.cookie?.userid || params?.userid || 0;
   const token = params?.cookie?.token || params?.token || 0;
   const vip_type = params?.cookie?.vip_type || params?.vipType || 0;
+  const mid = params?.cookie?.KUGOU_API_MID || '';
+  const dfid = params?.cookie?.dfid || '-';
   const dateTime = Date.now();
+
+  const u_info = '';
+  const fakem = userid ? cryptoMd5(`fakem${userid}${Math.floor(dateTime / 1000)}`).substring(0, 28) + '06' : 'e0b18f0891c6d15cd91fe41710001bf19706';
 
   const dataMap = {
     appid,
     clienttime: dateTime,
-    mid: params?.cookie?.KUGOU_API_MID,
+    mid,
     action: params?.action || 'play',
     recommend_source_locked: 0,
     song_pool_id: Number(params?.song_pool_id || 0),
@@ -20,7 +26,7 @@ module.exports = (params, useAxios) => {
     clientver,
     is_overplay: params?.is_overplay ? 1 : 0,
     mode: params?.mode || 'normal',
-    fakem: 'e0b18f0891c6d15cd91fe41710001bf19706',
+    fakem,
     key: signParamsKey(dateTime),
     mark_list: '',
     hash_like_list: '',
@@ -28,6 +34,7 @@ module.exports = (params, useAxios) => {
     playlist_ver: 2,
     active_swtich: 'on',
     cur_mark: '99999998',
+    u_info,
   };
 
   if (userid) {
